@@ -11,7 +11,7 @@ udaExec = teradata.UdaExec(appName="HelloWorld", version="1.0",
                            logConsole=False)
 
 session = udaExec.connect(method="odbc", dsn="TDDEV",
-                          username="crmp_su", password="crmp_pass");
+                          username="***", password="***");
 
 for row in session.execute(sql):
     print(row)

@@ -1,35 +1,65 @@
-from flask import Flask, url_for, request, render_template, Response, jsonify, json
+from flask import Flask, json
 import teradata
+import datetime
+import logging
 from sqlalchemy import create_engine
 
 app = Flask(__name__)
 
 
 # routes and methods
-@app.route('/')
+@app.route('/check')
 def index():
-    return "Welcome to tdPyInterface"
+    status = "pyTeradata Interface is operating normally!"
+    return json.dumps({'status': status}, indent=3)
 
 
-@app.route('/tddev/tplib/<query>', methods=['GET'])
-def show_qry_result(query):
+@app.route('/tddev/tQueryRaw/<query>', methods=['GET'])
+def show_tddev_tqueryraw_result(query):
     data = []
+
+    vals = []  # to store data
+    cols = []  # to store cols
+    master = []  # to store tuples of both
+
     print ("SQL ISSUED : %s" % query)
+
     udaExec = teradata.UdaExec(appName="tdPyInterface", version="1.0",
                                logConsole=False, appConfigFile="tdPyInterface.ini")
-    session = udaExec.connect(method="odbc", dsn="TDDEV",
-                              username="crmp_su", password="crmp_pass")
 
-    # session = udaExec.connect(method="rest", dsn="TDDEV", username="crmp_su",
-    #                             password="crmp_pass")
+    session = udaExec.connect("${dataSourceName}")
+    cursor = session.execute(query)
 
-    for row in session.execute(query):
-        data.append(str(row))
+    for row in cursor.description:
+        cols.append(row[0])
+
+    for row in cursor:
+        vals.append(str(row))
+
+    for item in vals:
+        data = item[item.find('[') + 1:item.find(']')]
+        parts = data.split(',')
+        for x, y in zip(cols, parts):
+            master.append({x.strip(): y.strip()})
+
+    return json.dumps({'data': master}, indent=3)
+
+    # return jsonify(results=data)
 
 
+@app.route('/tddev/tQueryFile/<file>', methods=['GET', 'POST'])
+def show_tddev_tqueryfile_result(file):
+    return "work in progress"
 
-    return jsonify(results=data)
 
+@app.route('/tdprod/tQueryRaw/<query>', methods=['GET', 'POST'])
+def show_tdprod_tqueryraw_result(query):
+    return "work in progress"
+
+
+@app.route('/tdprod/tQueryFile/<file>', methods=['GET', 'POST'])
+def show_tdprod_tqueryfile_result(file):
+    return "work in progress"
 
 @app.route('/tddev/sa/<query>')
 def show_sa_results(query):

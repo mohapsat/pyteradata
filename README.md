@@ -1,5 +1,6 @@
 # PYTERADATA
-Repo to allow running teradata queries in python
+
+Teradata Rest API layer created using Python Flask.
 
 `Demo:`
 

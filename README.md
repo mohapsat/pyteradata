@@ -1,6 +1,11 @@
 # PYTERADATA
 Repo to allow running teradata queries in python
 
+`Demo:`
+
+![](https://github.com/mohapsat/pyteradata/blob/master/pyteradata_restapi.gif)
+
+
 **`Setup instructions:`**
 
 ## Configure Pycharm to use virtualenv
@@ -16,6 +21,3 @@ Repo to allow running teradata queries in python
 ## Install Flask
 - Go to the **Terminal** window
 - Type: **pip install flask**
-
-
-**`Folder Structure:`**
